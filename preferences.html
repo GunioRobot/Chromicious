@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Chromicious - Preferences</title>
+		
+		<link rel="stylesheet" type="text/css" href="/resources/css/global.css"/>
+		<link rel="stylesheet" type="text/css" href="/resources/css/options.css"/>
+		<link rel="stylesheet" type="text/css" href="/resources/css/validationEngine.jquery.css"/>
+
+		<script type="text/javascript" src="/lib/v3/jquery.js"></script>
+		<script type="text/javascript" src="/lib/v3/jquery.validationEngine.js"></script>
+		<script type="text/javascript" src="/lib/v3/Configuration.js"></script>
+		<script type="text/javascript" src="/lib/v3/Storage.js"></script>
+		<script type="text/javascript" src="/lib/v3/Chromicious.js"></script>
+		<script type="text/javascript" src="/lib/v3/Messages.js"></script>
+		<script type="text/javascript" src="/lib/v3/View.js"></script>
+
+		<script type="application/javascript">
+			$(document).ready(function() {
+				restorePreferences();
+				
+				// Enable form validation				
+				var isFormValid = false;
+			
+			    $("#options_form").validationEngine({
+			        inlineValidation: true,
+			        success: function () {
+						isFormValid = true;
+					},
+			        failure: function() {}
+			    });
+			
+				// submission event
+				$('#options_form').bind('submit', function(event) {
+					if (isFormValid) {
+						isFormValid = false;
+						$('#save_button').attr('disabled', 'disabled');
+						savePreferences();
+					}
+				});
+				
+				// enable save button if any changes
+				$('input, select').bind('change keypress', function(event) {
+					enableSave();
+				});
+				
+				// restrict chars entering
+				$('#number_of_recent').bind('keydown keypress', function(event) {
+					var numeric = /\d/;
+					if (!numeric.test(String.fromCharCode(event.which)) 
+						&& (event.keyCode != backSpaceKeyCode && event.keyCode != deleteKeyCode
+						&& event.keyCode != rightArrowKeyCode && event.keyCode != leftArrowKeyCode
+						&& event.keyCode != homeKeyCode && event.keyCode != endKeyCode
+						&& event.keyCode != tabKeyCode && event.keyCode != enterKeyCode)) {
+						return false;
+					}
+				});
+			});
+			
+			function enableSave() {
+				$('#save_button').attr('disabled', false);
+			}
+			
+			function savePreferences() {
+				var chromicious = Chromicious.getInstance();
+				
+				if ($('#sync_interval').val() != chromicious.storage.getBookmarksSyncInterval()) {
+					chromicious.restartSynchronization();
+				}
+				
+				chromicious.storage.setBookmarksSyncInterval($('#sync_interval').val());
+				chromicious.storage.setNumberOfRecentBookmarks($('#number_of_recent').val());
+
+				displayNotification('Preferences have been saved.', 3000);
+			}
+			
+			function restorePreferences() {
+				var chromicious = Chromicious.getInstance();
+
+				if (chromicious.isUserAuthorized()) {
+					var loggedUsername = chromicious.storage.getUsername();
+
+					$('#yahooid_lbl').html('You are logged as <a target="_blank" href="http://delicious.com/' + loggedUsername + '">' + loggedUsername + '</a>');
+					$('#yahooid_login_lbl').html('<a href="http://delicious.com/logout" target="_blank">Sign Out</a>');
+					
+					$('#sync_interval').attr('disabled', false);
+				} else {
+					$('#yahooid_lbl').html('Do you have a Yahoo! or Delicious Account?<br/>');
+					$('#yahooid_login_lbl').html('<a href="http://delicious.com/login" target="_blank">Sign In</a>');
+				}
+
+				var syncInterval = (chromicious.storage.getBookmarksSyncInterval() != null) ? 
+					chromicious.storage.getBookmarksSyncInterval(): BOOKMARKS_SYNC_INTERVAL;
+
+				$('#sync_interval').html('');
+				for (option in syncOptions) {
+				 	var selected = (option == syncInterval) ? 'selected' : '';
+					$('<option value="'+option+'" '+selected+'>'+syncOptions[option]+'</option>').appendTo('#sync_interval');
+				}
+
+				var numberOfRecent = (chromicious.storage.getNumberOfRecentBookmarks() != null) ?
+					chromicious.storage.getNumberOfRecentBookmarks() : RECENT_BOOKMARKS_TOTAL;
+				$('#number_of_recent').val(numberOfRecent);
+			}
+		</script>
+	</head>
+	<body>
+		
+		<div id="options_container">
+			
+			<div id="logo"></div>
+			
+			<div id="notification_container">
+				<div id="error_box"></div>
+				<div id="notification_box"></div>
+			</div>
+			
+			<form id="options_form" method="post">
+				
+				<fieldset>
+					<legend>Security</legend>
+					
+					<!-- YahooID marker -->
+					<div id="yahooid_fields">
+						<span id="yahooid_lbl"></span>
+						<div id="yahooid_login_lbl"></div>
+					</div>
+					
+				</fieldset>
+				
+				<fieldset>
+					<legend>General</legend>
+					
+					<div id="sync_fields">
+						<label for="sync_interval">Sync with Delicious:</label>
+						<div id="sync_selector">
+							<select id="sync_interval">
+							</select>
+						</div>
+					</div>
+					
+					<div id="number_of_recent_fields">
+						<label for="number_of_recent">Number of recent bookmarks:</label>
+						<input type="text" name="number_of_recent" id="number_of_recent" class="validate[custom[onlyNumber]]" maxlength="3" value="20"/>
+					</div>
+				</fieldset>
+				
+				<div id="controls">
+					<button name="save" id="save_button" disabled="disabled">Save changes</button>
+				</div>
+				
+			</form>
+		</div>
+	</body>
+</html>

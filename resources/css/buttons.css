@@ -1,0 +1,74 @@
+.btn {
+	display:inline-block;
+	background:none;
+	margin:0;
+	padding:3px 0;
+	border-width:0;
+	overflow:visible;
+	font: 11px Arial,Sans-serif;
+	text-decoration:none;
+	color:#333;
+}
+
+* html button.btn {
+	padding-bottom:1px;
+}
+
+html:not([lang*=""]) button.btn {
+	margin:0 -3px;
+}
+
+.btn span {
+	background:#ddd url(../images/bg-button.png) repeat-x 0 0;
+	margin:0;
+	padding:3px 0;
+	border-left:1px solid #bbb;
+	border-right:1px solid #aaa;
+}
+
+* html .btn span {
+	padding-top:0;
+}
+
+.btn span span {
+	position:relative;
+	padding:3px .4em;
+	border-width:0;
+	border-top:1px solid #bbb;
+	border-bottom:1px solid #aaa;
+}
+
+button.pill-l span {
+	border-right-width:0;
+}
+button.pill-l span span {
+	border-right:1px solid #bbb;
+}
+button.pill-c span {
+	border-right-style:none;
+	border-left-color:#fff;
+}
+button.pill-c span span {
+	border-right:1px solid #bbb;
+}
+button.pill-r span {
+	border-left-color:#fff;
+}
+
+.btn:hover span, .btn:hover span span, .btn:focus span, .btn:focus span span {
+	cursor: default;
+	border-color:#999999 /*9cf*/ !important;
+	color:#000;
+}
+.btn:active span {
+	background-position:0 -400px;
+	outline:none;
+}
+.btn:focus, .btn:active {
+	outline:none;
+}
+
+.primary {
+	font-weight:bold;
+	color:#000;
+}

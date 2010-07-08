@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Chromicious Background Process</title>
+	
+		<script type="text/javascript" src="/lib/v3/jquery.js"></script>
+		<script type="text/javascript" src="/lib/v3/Configuration.js"></script>
+		<script type="text/javascript" src="/lib/v3/Storage.js"></script>
+		<script type="text/javascript" src="/lib/v3/Chromicious.js"></script>
+		<script type="text/javascript" src="/lib/v3/Bookmarks.js"></script>
+	
+		<script type="text/javascript">
+			var chromiciousInstance = null;
+
+			function getChromiciousInstance() {
+				return chromiciousInstance;
+			}
+			
+			function init() {
+				if (chromiciousInstance == null) {
+					console.log('Starting new Chromicious instance');
+					
+					chromiciousInstance = new Chromicious();
+				}
+
+				loadAuthorizationTriggers(chromiciousInstance);
+				
+				/* if user is authorized with delicious then start synchronizatin interval */
+				chromiciousInstance.restartSynchronization();
+				
+				if (chromiciousInstance.storage.isFirstLoad()) {
+					chromiciousInstance.storage.setFirstLoad(0);
+
+					preferencesWindow();
+				}
+				
+				chrome.extension.onConnect.addListener(function(port) {
+					port.onMessage.addListener(function(msgObj) {
+						if (msgObj.msg == 'saveBookmark') {
+							saveBookmark();
+						}
+					});
+				});
+				
+				// clean legacy data from storage
+				chromiciousInstance.storage.cleanLegacy();
+			}
+		
+			function loadAuthorizationTriggers(chromiciousInstance) {
+				try {
+					chrome.extension.onConnect.addListener(function(port) {
+						try {
+							port.onMessage.addListener(function(msgObj) {
+								console.log('New message received: ' + msgObj.msg);
+								
+								if (msgObj && msgObj.msg && msgObj.msg == 'updateCookies') {
+									var storedCookie = chromiciousInstance.storage.getAuthInfo();
+									
+					                if (!storedCookie && msgObj.cookie) {
+										console.log('User logs in.');
+						
+										chromiciousInstance.storage.setAuthInfo(msgObj.cookie);
+										chromiciousInstance.storage.setUsername(chromiciousInstance.getUsernameFromCookie(msgObj.cookie));
+					                  	chromiciousInstance.synchronize();
+										chromiciousInstance.sendEvent('updateOptionsWindow');
+					                } else if (storedCookie && msgObj.cookie && storedCookie != msgObj.cookie) {
+										console.log('User changes login details.');
+
+					                  	chromiciousInstance.storage.setAuthInfo(msgObj.cookie);
+										chromiciousInstance.storage.setUsername(chromiciousInstance.getUsernameFromCookie(msgObj.cookie));
+										chromiciousInstance.storage.removeAll();
+										chromiciousInstance.synchronize();
+										chromiciousInstance.sendEvent('updateOptionsWindow');
+					                } else if (storedCookie && !msgObj.cookie) {
+										console.log('User logs out.');
+						
+										chromiciousInstance.storage.setAuthInfo('');
+										chromiciousInstance.storage.setUsername('');
+					                  	chromiciousInstance.storage.removeAll();
+										chromiciousInstance.stopSynchronization();
+										chromiciousInstance.sendEvent('updateOptionsWindow');
+					                }
+								}
+							});
+						} catch (e) {
+							console.log('Unable to add listeners in bgprocess.');
+						}
+					});
+				} catch (e) {
+					console.log('Unable to open extension port in bgprocess.');
+				}
+			}
+		</script>
+	</head>
+	
+	<body onload="init();"></body>
+</html>

@@ -1,0 +1,143 @@
+#bookmarks {
+	padding: 10px;
+}
+
+/* experimental style */
+#bookmarks a {
+	color: #0065CC;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 90%;
+	outline-style: none !important;
+	outline-width: medium !important;
+}
+
+#bookmarks_list {
+	overflow: auto;
+	height: 250px;
+	border: 5px solid #DDD /*#4E96ED*/;
+	-webkit-border-radius: 3px;
+	padding: 5px;
+}
+
+#tags_block {
+	overflow-x: hidden;
+	overflow-y: auto;
+	height: 75px;
+	border: 5px solid #DDD;
+	-webkit-border-radius: 3px;
+	padding: 5px;
+	font-size: 90%;
+	line-height:1.5em;
+}
+
+#tags_container {
+	width: 410px;
+}
+
+a.tag_link  {
+	text-decoration: none;
+	padding: 4px;
+}
+
+.tag_1 {
+	font-size: inherit;
+}
+
+.tag_2 {
+	font-size: 13px !important;
+}
+
+.tag_3 {
+	font-size: 15px !important;
+}
+
+.tag_4 {
+	font-size: 18px !important;
+}
+
+.tag_selected {
+	background-color: #BE2026;
+	-webkit-border-radius: 3px;
+	color: #FFF !important;
+	/*padding: 3px !important;*/
+}
+
+#tags_small_descr {
+	float:left;
+}
+
+#tags_more_link {
+	font-size: 12px;
+	text-align: right;
+	margin-right: 5px;
+}
+
+#tags_more_link a {
+	text-decoration: none;
+}
+
+/* end experimental style */
+
+.h2 {
+	padding: 0;
+	margin: 0;
+}
+
+.block_title {
+	margin-left: 10px;
+	-webkit-border-top-left-radius:3px;
+	-webkit-border-top-right-radius:3px;
+	background: #DDD;
+	font-weight: bold;
+	width: 150px;
+	text-align: center;
+	padding: 4px;
+}
+
+.tags_title {
+	width: 50px !important;
+}
+
+.devider {
+	height: 20px;
+}
+
+#bookmarks .bookmark_link {
+	padding-bottom: 5px;
+}
+
+/* Form field */
+input[type=text] {
+	font-size: 15px;
+	width: 300px;
+}
+
+.hidden {
+	display:none;
+}
+
+#logo {
+	padding: 0;
+	width: 200px;
+	height: 50px;
+	background: url('../images/chromelicious-search-logo.png') no-repeat;
+	margin: 10px 0 0 10px;
+}
+
+#sync_bookmarks {
+	top: 25px;
+	left: 280px;
+	width: 130px;
+	position: absolute;
+	display: none;
+}
+
+#empty_results {
+	margin: 0 auto;
+	font-size: 14px;
+	color: #999;
+	text-align: center;
+	display: none;
+	width: 250px;
+	margin-top: 25%;
+}

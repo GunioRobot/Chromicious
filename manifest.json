@@ -1,0 +1,27 @@
+{
+	"name": "Chromicious (Delicious Bookmarks)",
+	"version": "2.5.1",
+
+	"description": "Chromicious integrates your Delicious bookmarks with Google Chrome and keeps them in sync for easy access.",
+	"permissions": ["tabs", "http://*/", "https://*/", "notifications"],
+	"background_page": "lib/v3/bgprocess.html",
+	"options_page": "preferences.html",
+	"content_scripts": [
+	    {
+	      "matches": ["http://*/*", "https://*/*"],
+	      "js": ["lib/v3/jquery.js", "lib/v3/background.js"],
+		  "run_at": "document_end"
+	    }
+	],
+	"icons": {
+		"16": "resources/images/chromelicious16.png",
+		"32": "resources/images/chromelicious32.png",
+		"48": "resources/images/chromelicious48.png",
+		"128": "resources/images/chromelicious128.png"
+	},
+	"browser_action": {
+	  "default_icon": "resources/images/menu_icon.png",
+	  "default_title": "Chromicious",
+	  "popup": "menu.html"
+	}
+}

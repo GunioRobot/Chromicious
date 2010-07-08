@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Chromicious - Your Bookmarks</title>
+
+	<link rel="stylesheet" type="text/css" href="/resources/css/global.css"/>
+	<link rel="stylesheet" type="text/css" href="/resources/css/bookmarks.css"/>
+	<link rel="stylesheet" type="text/css" href="/resources/css/buttons.css"/>
+
+	<script type="text/javascript" src="/lib/v3/jquery.js"></script>
+	<script type="text/javascript" src="/lib/v3/Configuration.js"></script>
+	<script type="text/javascript" src="/lib/v3/Storage.js"></script>
+	<script type="text/javascript" src="/lib/v3/Chromicious.js"></script>
+	<script type="text/javascript" src="/lib/v3/Bookmarks.js"></script>
+	<script type="text/javascript" src="/lib/v3/View.js"></script>
+	<script type="text/javascript" src="/lib/v3/Messages.js"></script>
+	
+	<script type="application/javascript">
+		var chromicious = Chromicious.getInstance();
+	
+		function syncBookmarksAction() {
+			chromicious.synchronize();
+		}
+		
+		$(document).ready(function() {
+			$('#search_text').focus();
+			
+			if (chromicious.isUserAuthorized()) {
+				$('#sync_bookmarks').show();
+			}
+			
+			if (chromicious.storage.isSyncInProgress() == 1) {
+				displayProcess('Synchronizing bookmarks...');
+			}
+			
+			showRecentBookmarks();
+			$('input[name="search_text"]').live('keypress keyup', function() {
+				performSearchAndDisplayResult(jQuery.trim($('input[name="search_text"]').val()));
+			});
+		});
+	</script>
+</head>
+
+<body onresize="window.resizeTo(450, 700);" onblur="self.focus();">
+	<div id="process_box"></div>
+	
+	<div id="logo"></div>
+	<div id="sync_bookmarks"><button type="button" class="btn" onClick="syncBookmarksAction();" id="sync_button"><span><span>Synchronize bookmarks</span></span></button></div>
+	
+	<div class="clear"></div>
+	
+	<div id="notification_container">
+		<div id="error_box"></div>
+		<div id="notification_box"></div>
+	</div>
+	
+	<div id="bookmarks">
+		<div id="search_bookmarks">
+			<form id="search_form">
+				<input type="text" name="search_text" id="search_text" /><br/>
+				<small>Start typing in this field to search your bookmarks.</small>
+			</form>
+		</div>
+		
+		<div class="devider"></div>
+		
+		<div id="tags_title" class="block_title tags_title">Tags</div>
+		<div id="tags_block"><div id="tags_container"></div></div>
+		<div id="tags_small_descr"><small>To clear selection click again on selected tag.</small></div><div id="tags_more_link"><a href="javascript:showMoreTags();">more tags »</a></div>
+		
+		<div class="devider"></div>
+		
+		<div id="bookmarks_title" class="block_title">Recent Bookmarks</div>
+		<div id="bookmarks_list">
+			<div id="empty_results">You have no more items or search criteria does not match any bookmarks.</div>
+			<div id="bookmarks_list_container">
+			</div>
+		</div>
+	</div>
+</body>
+</html>
