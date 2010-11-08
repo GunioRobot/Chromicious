@@ -22,6 +22,9 @@
 					console.log('Starting new Chromicious instance');
 					
 					chromiciousInstance = new Chromicious();
+
+					chrome.contextMenus.create({"title": "Bookmark This Page", "contexts":["page"],
+					                                       "onclick": saveBookmark});
 				}
 
 				loadAuthorizationTriggers(chromiciousInstance);
